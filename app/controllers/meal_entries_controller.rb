@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MealEntriesController < ApplicationController
   def index
     render json: {

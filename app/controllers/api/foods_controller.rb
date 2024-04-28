@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Api::FoodsController < Api::ApplicationController
   def index
     render json: "Api::FoodsController#index"
