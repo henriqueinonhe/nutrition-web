@@ -47,6 +47,18 @@ gem "bootsnap", require: false
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri windows]
+
+  gem "rubocop", "~> 1.63"
+
+  gem "rubocop-rails", require: false
+
+  gem "rubocop-rspec", require: false
+
+  gem "rubocop-rspec_rails", require: false
+
+  gem "rubocop-performance", require: false
+
+  gem "rspec-rails", "~> 6.1"
 end
 
 group :development do
@@ -65,13 +77,3 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
-
-gem "rubocop", "~> 1.63"
-
-gem "rubocop-rails", require: false
-
-gem "rubocop-rspec", require: false
-
-gem "rubocop-rspec_rails", require: false
-
-gem "rubocop-performance", require: false

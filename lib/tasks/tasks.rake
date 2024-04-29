@@ -13,3 +13,7 @@ namespace :lint do
     end
   end
 end
+
+task :test do
+  sh "bundle exec rspec"
+end
