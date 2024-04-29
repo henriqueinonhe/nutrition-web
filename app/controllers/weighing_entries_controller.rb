@@ -17,6 +17,6 @@ class WeighingEntriesController < ApplicationController
   end
 
   def destroy
-    render json: "WeighingEntriesController#delete"
+    render json: "WeighingEntriesController#destroy"
   end
 end
