@@ -7,7 +7,8 @@ require:
 AllCops:
   NewCops: enable
   Include:
-    - "app/**/*.rb"
+    - app/**/*.rb
+    - spec/**/*.rb
 
 Style/Documentation:
   Enabled: false
@@ -43,4 +44,28 @@ Metrics/BlockNesting:
   Enabled: false
 
 Metrics/ModuleLength:
+  Enabled: false
+
+# Rails
+
+Rails/DynamicFindBy:
+  Enabled: false
+
+Rails/Output:
+  Exclude: 
+    - app/core/interface/**/*.rb
+
+Rails/Exit:
+  Exclude:
+    - app/core/interface/**/*.rb
+
+# RSpec
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/DescribedClass:
   Enabled: false
