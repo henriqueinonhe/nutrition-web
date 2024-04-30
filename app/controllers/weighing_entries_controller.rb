@@ -2,14 +2,24 @@
 
 class WeighingEntriesController < ApplicationController
   def index
-    render json: {
-      handler: "WeighingEntriesController#index",
-      csrf_token: form_authenticity_token
-    }
+    @entries = container.get(:list_weighings).call
   end
 
   def create
-    render json: "WeighingEntriesController#create"
+    add_weighing = container.get(:add_weighing)
+
+    date = Time.new(*params[:date].split("-").map(&:to_i))
+
+    begin
+      add_weighing.call(
+        date:,
+        weight_in_kg: params[:weight_in_kg].to_i
+      )
+    rescue Errors::Error => e
+      flash[:error] = e.tag?(:ValidationError) ? e.msg : "An error occurred"
+    end
+
+    redirect_to weighing_entries_path
   end
 
   def update

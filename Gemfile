@@ -79,3 +79,5 @@ group :test do
 end
 
 gem "faker", "~> 3.3"
+
+gem "vite_rails", "~> 3.0"

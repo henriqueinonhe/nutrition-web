@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe Infra::FsWeighingEntryRepository do
   def setup
-    weighings_file_path = "./storage/weighing.test.json"
+    weighings_file_path = "./storage/weighings.test.json"
     weighing_entry_repository = Infra::FsWeighingEntryRepository.new(
       weighings_file_path:
     )

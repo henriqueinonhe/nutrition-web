@@ -1,0 +1,47 @@
+.weighing-entries-table {
+  &__container {
+
+  }
+
+  &__head {
+
+  }
+
+  @mixin header {
+  }
+
+  &__date-header {
+    @include header;
+  }
+
+  &__weight-header {
+    @include header;
+  }
+
+  &__moving-average-header {
+    @include header;
+  }
+
+  &__weighing-entries-table-row {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  @mixin cell {
+    padding: 10px;
+    text-align: center;
+  }
+
+  &__date-cell {
+    @include cell;
+  }
+
+  &__weight-cell {
+    @include cell;
+  }
+
+  &__moving-average-cell {
+    @include cell;
+  }
+}

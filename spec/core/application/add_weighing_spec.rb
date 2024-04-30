@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe Application::AddWeighing do
   def setup
     weighing_entry_persistence = Infra::FsWeighingEntryPersistence.new(
-      weighings_file_path: "./storage/weighing.test.json"
+      weighings_file_path: "./storage/weighings.test.json"
     )
 
     existing_weighings = TestUtils::ArrayFactory.call(

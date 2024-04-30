@@ -7,6 +7,7 @@ class Application::ListWeighings
 
   def call
     weighing_entries = @weighing_entry_persistence.retrieve
-    weighing_entries.zip(Domain::ComputeWeighingAverages.call(weighing_entries))
+    sorted_weighing_entries = weighing_entries.sort_by(&:date)
+    sorted_weighing_entries.zip(Domain::ComputeWeighingAverages.call(sorted_weighing_entries))
   end
 end

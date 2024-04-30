@@ -1,0 +1,48 @@
+<%= vite_stylesheet_tag "~/entrypoints/weighing_entries/index.scss" %>
+
+<table class="weighing-entries-table__container">
+  <thead class="weighing-entries-table__head">
+    <tr>
+      <th class="weighing-entries-table__date-header">Data</th>
+      <th class="weighing-entries-table__weight-header">Peso (Kg)</th>
+      <th class="weighing-entries-table__moving-average-header">Média Móvel (Kg)</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @entries.each do |weighing, average| %>
+      <tr class="weighing-entries-table__row">
+        <td class="weighing-entries-table__date-cell">
+          <%= weighing.date.strftime("%d/%m/%Y") %>
+        </td>
+
+        <td class="weighing-entries-table__weight-cell">
+          <%= weighing.weight_in_kg %>
+        </td>
+        
+        <td class="weighing-entries-table__moving-average-cell">
+          <%= WeighingEntriesHelper.format_moving_average(average) %>
+        </td>
+
+        <td>
+          <%= button_to "Deletar", weighing_entry_path(weighing.id), method: :delete  %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+
+<%= form_with url: weighing_entries_path, method: :post do |form| %>
+  <%= form.label :date, "Data:" %>
+  <%= form.date_field :date, value: Time.now %>
+
+  <%= form.label :weight_in_kg, "Peso (Kg)" %>
+  <%= form.text_field :weight_in_kg %>
+
+  <%= form.submit "Adicionar Pesagem" %>
+<% end %>
+
+<% if flash[:error] %>
+  <p><%= flash[:error] %></p>
+<% end %>

@@ -5,13 +5,16 @@ class Application::AddWeighing
     @weighing_entry_persistence = weighing_entry_persistence
   end
 
-  def call(weight_in_kg)
+  def call(
+    date:,
+    weight_in_kg:
+  )
     weighings = @weighing_entry_persistence.retrieve
 
     begin
       new_weighing_entry = Domain::WeighingEntry.new(
         id: Random.uuid,
-        date: Time.zone.now,
+        date:,
         weight_in_kg:
       )
     rescue Errors::Error => e
