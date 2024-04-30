@@ -27,6 +27,10 @@ class WeighingEntriesController < ApplicationController
   end
 
   def destroy
-    render json: "WeighingEntriesController#destroy"
+    delete_weighing = container.get(:delete_weighing)
+
+    delete_weighing.call(params[:id])
+
+    redirect_to weighing_entries_path
   end
 end

@@ -2,7 +2,18 @@
 
 class Api::WeighingEntriesController < Api::ApplicationController
   def index
-    render json: "Api::WeighingEntriesController#index"
+    list_weighings = container.get(:list_weighings)
+
+    entries = list_weighings.call
+
+    formatted_entries = entries.map do |weighing, average|
+      {
+        weighing:,
+        average:
+      }
+    end
+
+    render json: formatted_entries
   end
 
   def show
