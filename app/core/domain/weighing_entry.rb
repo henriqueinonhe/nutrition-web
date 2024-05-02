@@ -10,7 +10,7 @@ class Domain::WeighingEntry
 
     raise Errors::Error.new(
       msg: "ID (#{id}) is not a valid ID!",
-      tags: %i[PreconditionViolation ConstructionFailure WeighingEntry InvalidId]
+      tags: %i[WeighingEntryConstructionFailure InvalidId]
     )
   end
 
@@ -19,7 +19,7 @@ class Domain::WeighingEntry
 
     raise Errors::Error.new(
       msg: "Date (#{date}) is not a valid date!",
-      tags: %i[PreconditionViolation ConstructionFailure WeighingEntry InvalidDate]
+      tags: %i[WeighingEntryConstructionFailure InvalidDate]
     )
   end
 
@@ -28,7 +28,7 @@ class Domain::WeighingEntry
 
     raise Errors::Error.new(
       msg: "Weight (#{weight}) is not a valid weight!",
-      tags: %i[PreconditionViolation ConstructionFailure WeighingEntry InvalidWeight]
+      tags: %i[WeighingEntryConstructionFailure InvalidWeight]
     )
   end
 
@@ -40,6 +40,9 @@ class Domain::WeighingEntry
     @id = id
     @date = date
     @weight_in_kg = weight_in_kg
+  end
+
+  def date=(new_date)
   end
 
   def to_s

@@ -59,6 +59,9 @@ Rails/Exit:
   Exclude:
     - app/core/interface/**/*.rb
 
+Rails/TimeZone:
+  Enabled: false
+
 # RSpec
 
 RSpec/ExampleLength:

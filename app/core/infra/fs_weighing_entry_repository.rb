@@ -17,6 +17,7 @@ class Infra::FsWeighingEntryRepository
     list.map do |serialized_entry|
       Domain::WeighingEntry.new(
         id: serialized_entry[:id],
+        # Dates are always in UTC
         date: Time.new(serialized_entry[:date]),
         weight_in_kg: serialized_entry[:weight_in_kg]
       )
@@ -44,6 +45,8 @@ class Infra::FsWeighingEntryRepository
     weighings << new_weighing
 
     store(weighings)
+
+    new_weighing
   end
 
   def edit(id:, date:, weight_in_kg:)
@@ -51,10 +54,19 @@ class Infra::FsWeighingEntryRepository
 
     weighing_to_be_edited = weighings.find { |weighing| weighing.id == id }
 
+    if weighing_to_be_edited.nil?
+      raise Errors::Error.new(
+        msg: "Weighing entry with id #{id} not found",
+        tags: %i[WeighingEntryRepository WeighingEntryNotFound]
+      )
+    end
+
     weighing_to_be_edited.date = date
     weighing_to_be_edited.weight_in_kg = weight_in_kg
 
     store(weighings)
+
+    weighing_to_be_edited
   end
 
   def delete(id)
@@ -63,11 +75,14 @@ class Infra::FsWeighingEntryRepository
     weighings.reject! { |weighing| weighing.id == id }
 
     store(weighings)
+
+    nil
   end
 
   def store(weighings)
     file = File.open(@weighings_file_path, "w")
 
+    # Dates are always in UTC
     file.write(weighings.map(&:to_h).to_json)
 
     file.close

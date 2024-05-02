@@ -8,22 +8,25 @@ class WeighingEntriesController < ApplicationController
   def create
     add_weighing = container.get(:add_weighing)
 
-    date = Time.new(*params[:date].split("-").map(&:to_i))
+    begin
+      date = Time.new(*params[:date].split("-").map { |str| Integer(str) })
+      # TODO: We want more robust validation
+    rescue ArgumentError
+      flash[:error] = "Invalid date"
+    end
 
     begin
       add_weighing.call(
         date:,
-        weight_in_kg: params[:weight_in_kg].to_i
+        weight_in_kg: Integer(params[:weight_in_kg])
       )
     rescue Errors::Error => e
       flash[:error] = e.tag?(:ValidationError) ? e.msg : "An error occurred"
+    rescue ArgumentError
+      flash[:error] = "Invalid weight"
     end
 
     redirect_to weighing_entries_path
-  end
-
-  def update
-    render json: "WeighingEntriesController#update"
   end
 
   def destroy
