@@ -57,7 +57,7 @@ class Infra::FsWeighingEntryRepository
     if weighing_to_be_edited.nil?
       raise Errors::Error.new(
         msg: "Weighing entry with id #{id} not found",
-        tags: %i[WeighingEntryRepository WeighingEntryNotFound]
+        tags: %i[WeighingEntryRepository FailedToEdit WeighingEntryNotFound]
       )
     end
 
@@ -71,6 +71,15 @@ class Infra::FsWeighingEntryRepository
 
   def delete(id)
     weighings = retrieve_all
+
+    weighing_to_be_deleted = weighings.find { |weighing| weighing.id == id }
+
+    if weighing_to_be_deleted.nil?
+      raise Errors::Error.new(
+        msg: "Weighing entry with id #{id} not found",
+        tags: %i[WeighingEntryRepository FailedToDelete WeighingEntryNotFound]
+      )
+    end
 
     weighings.reject! { |weighing| weighing.id == id }
 

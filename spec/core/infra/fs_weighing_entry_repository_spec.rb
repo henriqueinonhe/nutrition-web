@@ -149,7 +149,7 @@ RSpec.describe Infra::FsWeighingEntryRepository do
         error = results[:error]
 
         expect(error).to be_a(Errors::Error)
-        expect(error.tags).to match_array(%i[WeighingEntryRepository WeighingEntryNotFound])
+        expect(error.tags).to match_array(%i[WeighingEntryRepository WeighingEntryNotFound FailedToEdit])
       end
     end
 
@@ -192,9 +192,124 @@ RSpec.describe Infra::FsWeighingEntryRepository do
         aggregate_failures do
           expect(edited_entry.date).to eq(new_date)
           expect(edited_entry.weight_in_kg).to eq(new_weight_in_kg)
-          expect(saved_entries).to match_array(existing_entries)
+          expect(saved_entries).to match_array(
+            existing_entries.map do |entry|
+              entry.id == edited_entry.id ? edited_entry : entry
+            end
+          )
         end
       end
+    end
+  end
+
+  describe "#delete" do
+    context "when there is no weighing entry associated with given id" do
+      def second_setup
+        result = setup
+        weighing_entry_repository = result[:weighing_entry_repository]
+        existing_entries = result[:existing_entries]
+
+        non_existent_id = Random.uuid
+
+        stored_entries = weighing_entry_repository.retrieve_all
+
+        {
+          existing_entries:,
+          weighing_entry_repository:,
+          non_existent_id:,
+          stored_entries:
+        }
+      end
+
+      it "raises an error and leaves stored entries untouched" do
+        results = second_setup
+
+        existing_entries = results[:existing_entries]
+        weighing_entry_repository = results[:weighing_entry_repository]
+        non_existent_id = results[:non_existent_id]
+        stored_entries = results[:stored_entries]
+
+        expect do
+          weighing_entry_repository.delete(non_existent_id)
+        end
+          .to raise_error do |error|
+            aggregate_failures do
+              expect(error).to be_a(Errors::Error)
+              expect(error.tag?(:WeighingEntryRepository)).to be(true)
+              expect(error.tag?(:WeighingEntryNotFound)).to be(true)
+              expect(error.tag?(:FailedToDelete)).to be(true)
+            end
+          end
+
+        expect(existing_entries).to eq(stored_entries)
+      end
+    end
+
+    context "when there IS a weighing entry associated with given id" do
+      def second_setup
+        result = setup
+        weighing_entry_repository = result[:weighing_entry_repository]
+        existing_entries = result[:existing_entries]
+
+        entry_to_delete = existing_entries.sample
+
+        weighing_entry_repository.delete(entry_to_delete.id)
+
+        stored_entries = weighing_entry_repository.retrieve_all
+
+        {
+          existing_entries:,
+          weighing_entry_repository:,
+          entry_to_delete:,
+          stored_entries:
+        }
+      end
+
+      it "deletes the corresponding weighing entry" do
+        results = second_setup
+
+        existing_entries = results[:existing_entries]
+        entry_to_delete = results[:entry_to_delete]
+        stored_entries = results[:stored_entries]
+
+        expect(stored_entries).to eq(
+          existing_entries.reject { |entry| entry.id == entry_to_delete.id }
+        )
+      end
+    end
+  end
+
+  describe "#store" do
+    def second_setup
+      result = setup
+
+      weighing_entry_repository = result[:weighing_entry_repository]
+      existing_entries = result[:existing_entries]
+
+      new_entries = TestUtils::ArrayFactory.call(
+        -> { TestUtils::WeighingEntryFactory.call },
+        10
+      )
+
+      weighing_entry_repository.store(new_entries)
+
+      stored_entries = weighing_entry_repository.retrieve_all
+
+      {
+        weighing_entry_repository:,
+        existing_entries:,
+        stored_entries:,
+        new_entries:
+      }
+    end
+
+    it "stores the given weighing entries" do
+      results = second_setup
+
+      stored_entries = results[:stored_entries]
+      new_entries = results[:new_entries]
+
+      expect(stored_entries).to eq(new_entries)
     end
   end
 end

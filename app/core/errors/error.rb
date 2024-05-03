@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 class Errors::Error < StandardError
-  attr_reader :msg, :tags
+  attr_reader :msg, :tags, :sub_errors
 
-  def initialize(msg:, tags:)
+  def initialize(msg:, tags:, sub_errors: [])
     super(msg)
 
     @msg = msg
     @tags = tags
+    @sub_errors = sub_errors
   end
 
   def tag?(*tags)

@@ -19,6 +19,10 @@ Style/ClassAndModuleChildren:
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 
+Style/MultilineBlockChain:
+  Exclude: 
+    - spec/**/*.rb
+
 Metrics/ClassLength:
   Enabled: false
 
