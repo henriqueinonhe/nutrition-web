@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe Application::ListWeighings do
   def setup
-    weighing_entry_persistence = Infra::FsWeighingEntryPersistence.new(
+    weighing_entry_repository = Infra::FsWeighingEntryRepository.new(
       weighings_file_path: "./storage/weighings.test.json"
     )
 
@@ -36,10 +36,10 @@ RSpec.describe Application::ListWeighings do
     ]
 
     list_weighings = Application::ListWeighings.new(
-      weighing_entry_persistence:
+      weighing_entry_repository:
     )
 
-    weighing_entry_persistence.store(weighings)
+    weighing_entry_repository.store(weighings)
 
     {
       weighings:,

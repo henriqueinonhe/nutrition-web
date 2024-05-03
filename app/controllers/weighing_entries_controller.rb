@@ -36,4 +36,9 @@ class WeighingEntriesController < ApplicationController
 
     redirect_to weighing_entries_path
   end
+
+  private
+
+  # def
+  # end
 end

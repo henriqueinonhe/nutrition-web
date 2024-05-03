@@ -1,16 +1,14 @@
 # frozen_string_literal: true
 
 class Application::AddWeighing
-  def initialize(weighing_entry_persistence:)
-    @weighing_entry_persistence = weighing_entry_persistence
+  def initialize(weighing_entry_repository:)
+    @weighing_entry_repository = weighing_entry_repository
   end
 
   def call(
     date:,
     weight_in_kg:
   )
-    weighings = @weighing_entry_persistence.retrieve
-
     begin
       new_weighing_entry = Domain::WeighingEntry.new(
         id: Random.uuid,
@@ -28,10 +26,6 @@ class Application::AddWeighing
       raise e
     end
 
-    weighings << new_weighing_entry
-
-    @weighing_entry_persistence.store(weighings)
-
-    weighings.zip(Domain::ComputeWeighingAverages.call(weighings))
+    @weighing_entry_repository.add(new_weighing_entry)
   end
 end

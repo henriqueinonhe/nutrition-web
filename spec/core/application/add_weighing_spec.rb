@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe Application::AddWeighing do
   def setup
-    weighing_entry_persistence = Infra::FsWeighingEntryPersistence.new(
+    weighing_entry_repository = Infra::FsWeighingEntryRepository.new(
       weighings_file_path: "./storage/weighings.test.json"
     )
 
@@ -13,16 +13,20 @@ RSpec.describe Application::AddWeighing do
       10
     )
 
-    weighing_entry_persistence.store(existing_weighings)
+    weighing_entry_repository.store(existing_weighings)
 
-    add_weighing = Application::AddWeighing.new(
-      weighing_entry_persistence:
+    new_entry = weighing_entry_repository.add(
+      date: Time.now,
+      weight_in_kg: 70
     )
+
+    stored_entries = weighing_entry_repository.retrieve_all
 
     {
       existing_weighings:,
-      add_weighing:,
-      weighing_entry_persistence:
+      weighing_entry_repository:,
+      stored_entries:,
+      new_entry:
     }
   end
 
@@ -30,11 +34,9 @@ RSpec.describe Application::AddWeighing do
     result = setup
 
     existing_weighings = result[:existing_weighings]
-    add_weighing = result[:add_weighing]
+    stored_entries = result[:stored_entries]
+    new_entry = result[:new_entry]
 
-    entries = add_weighing.call(70)
-
-    # TODO: Improve this
-    expect(entries.length).to eq(existing_weighings.length + 1)
+    expect(stored_entries).to match_array(existing_weighings + [new_entry])
   end
 end

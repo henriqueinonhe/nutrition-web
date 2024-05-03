@@ -4,6 +4,8 @@ module Domain::ComputeWeighingAverages
   MOVING_AVERAGE_WINDOW_SIZE_IN_DAYS = 5
 
   def self.call(weighings)
+    validate(weighings)
+
     averages = []
 
     weights = weighings.map(&:weight_in_kg)
@@ -19,5 +21,14 @@ module Domain::ComputeWeighingAverages
     end
 
     averages
+  end
+
+  def self.validate(weighings)
+    return unless !weighings.is_a?(Array) || weighings.any? { |entry| !entry.is_a?(Domain::WeighingEntry) }
+
+    raise Errors::Error.new(
+      msg: "All entries must be of type WeighingEntry",
+      tags: %i[ComputeWeighingAverages InvalidEntries]
+    )
   end
 end

@@ -3,7 +3,34 @@
 require "rails_helper"
 
 RSpec.describe Domain::ComputeWeighingAverages do
-  context "when calculating the weighing averages" do
+  context "when argument is nil" do
+    it "raises an error" do
+      expect { Domain::ComputeWeighingAverages.call(nil) }.to raise_error do |error|
+        expect(error.tags).to include(:ComputeWeighingAverages)
+        expect(error.tags).to include(:InvalidEntries)
+      end
+    end
+  end
+
+  context "when some entries are NOT weighing entries" do
+    it "raises an error" do
+      entries = [
+        Domain::WeighingEntry.new(
+          id: Random.uuid,
+          date: Time.zone.now,
+          weight_in_kg: 68.3
+        ),
+        "Not a weighing entry"
+      ]
+
+      expect { Domain::ComputeWeighingAverages.call(entries) }.to raise_error do |error|
+        expect(error.tags).to include(:ComputeWeighingAverages)
+        expect(error.tags).to include(:InvalidEntries)
+      end
+    end
+  end
+
+  context "when all entries are weighing entries" do
     it "returns the correct averages" do
       weights = [
         68.3,

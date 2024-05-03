@@ -25,3 +25,9 @@ module NutritionWeb
     # config.eager_load_paths << Rails.root.join("extras")
   end
 end
+
+def attempt(classes = [Exception])
+  yield
+rescue *classes => e
+  e
+end
