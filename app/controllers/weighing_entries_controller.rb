@@ -6,24 +6,35 @@ class WeighingEntriesController < ApplicationController
   end
 
   def create
-    add_weighing = container.get(:add_weighing)
-
     begin
-      date = Time.new(*params[:date].split("-").map { |str| Integer(str) })
-      # TODO: We want more robust validation
-    rescue ArgumentError
-      flash[:error] = "Invalid date"
-    end
+      add_weighing = container.get(:add_weighing)
 
-    begin
-      add_weighing.call(
-        date:,
-        weight_in_kg: Integer(params[:weight_in_kg])
-      )
-    rescue Errors::Error => e
-      flash[:error] = e.tag?(:ValidationError) ? e.msg : "An error occurred"
-    rescue ArgumentError
-      flash[:error] = "Invalid weight"
+      date, date_error = attempt(ArgumentError) { Time.new(*params[:date].split("-").map { |str| Integer(str) }) }
+
+      if date_error
+        flash[:error] = "Invalid date"
+        redirect_to weighing_entries_path
+        return
+      end
+
+      weight_in_kg, weight_error = attempt(ArgumentError) { Integer(params[:weight_in_kg]) }
+
+      if weight_error
+        flash[:error] = "Invalid weight"
+        redirect_to weighing_entries_path
+        return
+      end
+
+      _, add_weighing_error = attempt(Errors::Error) do
+        add_weighing.call(
+          date:,
+          weight_in_kg:
+        )
+      end
+
+      flash[:error] = compute_add_weighing_error_message(add_weighing_error) if add_weighing_error
+    rescue StandardError
+      flash[:error] = "Something went wrong"
     end
 
     redirect_to weighing_entries_path
@@ -37,8 +48,11 @@ class WeighingEntriesController < ApplicationController
     redirect_to weighing_entries_path
   end
 
-  private
+  def compute_add_weighing_error_message(add_weighing_error)
+    raise add_weighing_error unless add_weighing_error.tag?(:ValidationError)
 
-  # def
-  # end
+    return "Invalid date" if add_weighing_error.sub_errors.any? { |e| e.tag?(:InvalidDate) }
+
+    "Invalid weight" if add_weighing_error.sub_errors.any? { |e| e.tag?(:InvalidWeight) }
+  end
 end

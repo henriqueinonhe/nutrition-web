@@ -37,7 +37,7 @@ class Domain::WeighingEntry
       -> { self.class.validate_id(id) },
       -> { self.class.validate_date(date) },
       -> { self.class.validate_weight(weight_in_kg) }
-    ].filter_map { |f| attempt(&f) }
+    ].filter_map { |f| attempt(&f)[1] }
 
     if errors.any?
       raise Errors::Error.new(

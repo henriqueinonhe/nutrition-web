@@ -26,8 +26,12 @@ module NutritionWeb
   end
 end
 
-def attempt(classes = [Exception])
-  yield
+def attempt(*classes)
+  classes = [StandardError] if classes.empty?
+
+  result = yield
+
+  [result, nil]
 rescue *classes => e
-  e
+  [nil, e]
 end

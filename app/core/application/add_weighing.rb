@@ -9,23 +9,20 @@ class Application::AddWeighing
     date:,
     weight_in_kg:
   )
-    begin
-      new_weighing_entry = Domain::WeighingEntry.new(
-        id: Random.uuid,
-        date:,
-        weight_in_kg:
-      )
-    rescue Errors::Error => e
-      if e.tag?(:WeighingEntry) && e.tag?(:ConstructionFailure)
-        raise Errors::Error.new(
-          msg: e.msg,
-          tags: [:ValidationError]
-        )
-      end
 
-      raise e
+    @weighing_entry_repository.add(
+      date:,
+      weight_in_kg:
+    )
+  rescue Errors::Error => e
+    if e.tag?(:WeighingEntryConstructionFailure)
+      raise Errors::Error.new(
+        msg: e.msg,
+        tags: [:ValidationError],
+        sub_errors: e.sub_errors
+      )
     end
 
-    @weighing_entry_repository.add(new_weighing_entry)
+    raise e
   end
 end
