@@ -122,6 +122,42 @@ class Domain::Food
     @sodium_in_mg_per_gram = sodium_in_mg_per_gram
   end
 
+  def kcal_per_gram=(kcal_per_gram)
+    self.class.validate_kcal_per_gram(kcal_per_gram)
+
+    @kcal_per_gram = kcal_per_gram
+  end
+
+  def carbohydrates_in_grams_per_gram=(carbohydrates_in_grams_per_gram)
+    self.class.validate_carbohydrates_in_grams_per_gram(carbohydrates_in_grams_per_gram)
+
+    @carbohydrates_in_grams_per_gram = carbohydrates_in_grams_per_gram
+  end
+
+  def protein_in_grams_per_gram=(protein_in_grams_per_gram)
+    self.class.validate_protein_in_grams_per_gram(protein_in_grams_per_gram)
+
+    @protein_in_grams_per_gram = protein_in_grams_per_gram
+  end
+
+  def total_fat_in_grams_per_gram=(total_fat_in_grams_per_gram)
+    self.class.validate_total_fat_in_grams_per_gram(total_fat_in_grams_per_gram)
+
+    @total_fat_in_grams_per_gram = total_fat_in_grams_per_gram
+  end
+
+  def fibers_in_grams_per_gram=(fibers_in_grams_per_gram)
+    self.class.validate_fibers_in_grams_per_gram(fibers_in_grams_per_gram)
+
+    @fibers_in_grams_per_gram = fibers_in_grams_per_gram
+  end
+
+  def sodium_in_mg_per_gram=(sodium_in_mg_per_gram)
+    self.class.validate_sodium_in_mg_per_gram(sodium_in_mg_per_gram)
+
+    @sodium_in_mg_per_gram = sodium_in_mg_per_gram
+  end
+
   def stats_for_weight(weight_in_grams)
     # NOTE: Maybe extract this to a value object
     {
