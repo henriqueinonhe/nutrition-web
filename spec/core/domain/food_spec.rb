@@ -3,8 +3,316 @@
 require "rails_helper"
 
 RSpec.describe Domain::Food do
-  context "when creating a food" do
-    # TODO
+  describe "#initialize" do
+    context "when id is an empty string" do
+      it "raises an error" do
+        expect do
+          TestUtils::FoodFactory.call(
+            id: ""
+          )
+        end.to raise_error do |error|
+          aggregate_failures do
+            expect(error).to be_a(Errors::Error)
+            expect(error.tag?(:FoodConstructionFailure)).to be(true)
+            expect(error.sub_errors.size).to eq(1)
+            expect(error.sub_errors.any? { |e| e.tag?(:InvalidId) }).to be(true)
+            expect(error.sub_errors.any? { |e| e.tag?(:FoodValidationError) }).to be(true)
+          end
+        end
+      end
+    end
+
+    context "when id is not a string" do
+      it "raises an error" do
+        expect do
+          TestUtils::FoodFactory.call(
+            id: 34
+          )
+        end.to raise_error do |error|
+          aggregate_failures do
+            expect(error).to be_a(Errors::Error)
+            expect(error.tag?(:FoodConstructionFailure)).to be(true)
+            expect(error.sub_errors.size).to eq(1)
+            expect(error.sub_errors.any? { |e| e.tag?(:InvalidId) }).to be(true)
+            expect(error.sub_errors.any? { |e| e.tag?(:FoodValidationError) }).to be(true)
+          end
+        end
+      end
+    end
+
+    context "when name is an empty string" do
+      it "raises an error" do
+        expect do
+          TestUtils::FoodFactory.call(
+            name: ""
+          )
+        end.to raise_error do |error|
+          aggregate_failures do
+            expect(error).to be_a(Errors::Error)
+            expect(error.tag?(:FoodConstructionFailure)).to be(true)
+            expect(error.sub_errors.size).to eq(1)
+            expect(error.sub_errors.any? { |e| e.tag?(:InvalidName) }).to be(true)
+            expect(error.sub_errors.any? { |e| e.tag?(:FoodValidationError) }).to be(true)
+          end
+        end
+      end
+    end
+
+    context "when name is not a string" do
+      it "raises an error" do
+        expect do
+          TestUtils::FoodFactory.call(
+            name: 4
+          )
+        end.to raise_error do |error|
+          aggregate_failures do
+            expect(error).to be_a(Errors::Error)
+            expect(error.tag?(:FoodConstructionFailure)).to be(true)
+            expect(error.sub_errors.size).to eq(1)
+            expect(error.sub_errors.any? { |e| e.tag?(:InvalidName) }).to be(true)
+            expect(error.sub_errors.any? { |e| e.tag?(:FoodValidationError) }).to be(true)
+          end
+        end
+      end
+    end
+
+    context "when kcal_per_gram is not a number" do
+      it "raises an error" do
+        expect do
+          TestUtils::FoodFactory.call(
+            kcal_per_gram: "34"
+          )
+        end.to raise_error do |error|
+          aggregate_failures do
+            expect(error).to be_a(Errors::Error)
+            expect(error.tag?(:FoodConstructionFailure)).to be(true)
+            expect(error.sub_errors.size).to eq(1)
+            expect(error.sub_errors.any? { |e| e.tag?(:InvalidKcalPerGram) }).to be(true)
+            expect(error.sub_errors.any? { |e| e.tag?(:FoodValidationError) }).to be(true)
+          end
+        end
+      end
+    end
+
+    context "when kcal_per_gram is negative" do
+      it "raises an error" do
+        expect do
+          TestUtils::FoodFactory.call(
+            kcal_per_gram: -3
+          )
+        end.to raise_error do |error|
+          aggregate_failures do
+            expect(error).to be_a(Errors::Error)
+            expect(error.tag?(:FoodConstructionFailure)).to be(true)
+            expect(error.sub_errors.size).to eq(1)
+            expect(error.sub_errors.any? { |e| e.tag?(:InvalidKcalPerGram) }).to be(true)
+            expect(error.sub_errors.any? { |e| e.tag?(:FoodValidationError) }).to be(true)
+          end
+        end
+      end
+    end
+
+    context "when carbohydrates_in_grams_per_gram is not a number" do
+      it "raises an error" do
+        expect do
+          TestUtils::FoodFactory.call(
+            carbohydrates_in_grams_per_gram: "34"
+          )
+        end.to raise_error do |error|
+          aggregate_failures do
+            expect(error).to be_a(Errors::Error)
+            expect(error.tag?(:FoodConstructionFailure)).to be(true)
+            expect(error.sub_errors.size).to eq(1)
+            expect(error.sub_errors.any? { |e| e.tag?(:InvalidCarbohydratesInGramsPerGram) }).to be(true)
+            expect(error.sub_errors.any? { |e| e.tag?(:FoodValidationError) }).to be(true)
+          end
+        end
+      end
+    end
+
+    context "when carbohydrates_in_grams_per_gram is negative" do
+      it "raises an error" do
+        expect do
+          TestUtils::FoodFactory.call(
+            carbohydrates_in_grams_per_gram: -3
+          )
+        end.to raise_error do |error|
+          aggregate_failures do
+            expect(error).to be_a(Errors::Error)
+            expect(error.tag?(:FoodConstructionFailure)).to be(true)
+            expect(error.sub_errors.size).to eq(1)
+            expect(error.sub_errors.any? { |e| e.tag?(:InvalidCarbohydratesInGramsPerGram) }).to be(true)
+            expect(error.sub_errors.any? { |e| e.tag?(:FoodValidationError) }).to be(true)
+          end
+        end
+      end
+    end
+
+    context "when protein_in_grams_per_gram is not a number" do
+      it "raises an error" do
+        expect do
+          TestUtils::FoodFactory.call(
+            protein_in_grams_per_gram: "34"
+          )
+        end.to raise_error do |error|
+          aggregate_failures do
+            expect(error).to be_a(Errors::Error)
+            expect(error.tag?(:FoodConstructionFailure)).to be(true)
+            expect(error.sub_errors.size).to eq(1)
+            expect(error.sub_errors.any? { |e| e.tag?(:InvalidProteinInGramsPerGram) }).to be(true)
+            expect(error.sub_errors.any? { |e| e.tag?(:FoodValidationError) }).to be(true)
+          end
+        end
+      end
+    end
+
+    context "when protein_in_grams_per_gram is negative" do
+      it "raises an error" do
+        expect do
+          TestUtils::FoodFactory.call(
+            protein_in_grams_per_gram: -3
+          )
+        end.to raise_error do |error|
+          aggregate_failures do
+            expect(error).to be_a(Errors::Error)
+            expect(error.tag?(:FoodConstructionFailure)).to be(true)
+            expect(error.sub_errors.size).to eq(1)
+            expect(error.sub_errors.any? { |e| e.tag?(:InvalidProteinInGramsPerGram) }).to be(true)
+            expect(error.sub_errors.any? { |e| e.tag?(:FoodValidationError) }).to be(true)
+          end
+        end
+      end
+    end
+
+    context "when total_fat_in_grams_per_gram is not a number" do
+      it "raises an error" do
+        expect do
+          TestUtils::FoodFactory.call(
+            total_fat_in_grams_per_gram: "34"
+          )
+        end.to raise_error do |error|
+          aggregate_failures do
+            expect(error).to be_a(Errors::Error)
+            expect(error.tag?(:FoodConstructionFailure)).to be(true)
+            expect(error.sub_errors.size).to eq(1)
+            expect(error.sub_errors.any? { |e| e.tag?(:InvalidTotalFatInGramsPerGram) }).to be(true)
+            expect(error.sub_errors.any? { |e| e.tag?(:FoodValidationError) }).to be(true)
+          end
+        end
+      end
+    end
+
+    context "when total_fat_in_grams_per_gram is negative" do
+      it "raises an error" do
+        expect do
+          TestUtils::FoodFactory.call(
+            total_fat_in_grams_per_gram: -3
+          )
+        end.to raise_error do |error|
+          aggregate_failures do
+            expect(error).to be_a(Errors::Error)
+            expect(error.tag?(:FoodConstructionFailure)).to be(true)
+            expect(error.sub_errors.size).to eq(1)
+            expect(error.sub_errors.any? { |e| e.tag?(:InvalidTotalFatInGramsPerGram) }).to be(true)
+            expect(error.sub_errors.any? { |e| e.tag?(:FoodValidationError) }).to be(true)
+          end
+        end
+      end
+    end
+
+    context "when fibers_in_grams_per_gram is not a number" do
+      it "raises an error" do
+        expect do
+          TestUtils::FoodFactory.call(
+            fibers_in_grams_per_gram: "34"
+          )
+        end.to raise_error do |error|
+          aggregate_failures do
+            expect(error).to be_a(Errors::Error)
+            expect(error.tag?(:FoodConstructionFailure)).to be(true)
+            expect(error.sub_errors.size).to eq(1)
+            expect(error.sub_errors.any? { |e| e.tag?(:InvalidFibersInGramsPerGram) }).to be(true)
+            expect(error.sub_errors.any? { |e| e.tag?(:FoodValidationError) }).to be(true)
+          end
+        end
+      end
+    end
+
+    context "when fibers_in_grams_per_gram is negative" do
+      it "raises an error" do
+        expect do
+          TestUtils::FoodFactory.call(
+            fibers_in_grams_per_gram: -3
+          )
+        end.to raise_error do |error|
+          aggregate_failures do
+            expect(error).to be_a(Errors::Error)
+            expect(error.tag?(:FoodConstructionFailure)).to be(true)
+            expect(error.sub_errors.size).to eq(1)
+            expect(error.sub_errors.any? { |e| e.tag?(:InvalidFibersInGramsPerGram) }).to be(true)
+            expect(error.sub_errors.any? { |e| e.tag?(:FoodValidationError) }).to be(true)
+          end
+        end
+      end
+    end
+
+    context "when sodium_in_mg_per_gram is not a number" do
+      it "raises an error" do
+        expect do
+          TestUtils::FoodFactory.call(
+            sodium_in_mg_per_gram: "34"
+          )
+        end.to raise_error do |error|
+          aggregate_failures do
+            expect(error).to be_a(Errors::Error)
+            expect(error.tag?(:FoodConstructionFailure)).to be(true)
+            expect(error.sub_errors.size).to eq(1)
+            expect(error.sub_errors.any? { |e| e.tag?(:InvalidSodiumInMgPerGram) }).to be(true)
+            expect(error.sub_errors.any? { |e| e.tag?(:FoodValidationError) }).to be(true)
+          end
+        end
+      end
+    end
+
+    context "when sodium_in_mg_per_gram is negative" do
+      it "raises an error" do
+        expect do
+          TestUtils::FoodFactory.call(
+            sodium_in_mg_per_gram: -3
+          )
+        end.to raise_error do |error|
+          aggregate_failures do
+            expect(error).to be_a(Errors::Error)
+            expect(error.tag?(:FoodConstructionFailure)).to be(true)
+            expect(error.sub_errors.size).to eq(1)
+            expect(error.sub_errors.any? { |e| e.tag?(:InvalidSodiumInMgPerGram) }).to be(true)
+            expect(error.sub_errors.any? { |e| e.tag?(:FoodValidationError) }).to be(true)
+          end
+        end
+      end
+    end
+
+    context "when there are multiple validation errors" do
+      it "raises an error with all of them" do
+        expect do
+          TestUtils::FoodFactory.call(
+            id: "",
+            total_fat_in_grams_per_gram: "asdas",
+            sodium_in_mg_per_gram: -3
+          )
+        end.to raise_error do |error|
+          aggregate_failures do
+            expect(error).to be_a(Errors::Error)
+            expect(error.tag?(:FoodConstructionFailure)).to be(true)
+            expect(error.sub_errors.size).to eq(3)
+            expect(error.sub_errors.any? { |e| e.tag?(:InvalidId) }).to be(true)
+            expect(error.sub_errors.any? { |e| e.tag?(:InvalidTotalFatInGramsPerGram) }).to be(true)
+            expect(error.sub_errors.any? { |e| e.tag?(:InvalidSodiumInMgPerGram) }).to be(true)
+            expect(error.sub_errors.any? { |e| e.tag?(:FoodValidationError) }).to be(true)
+          end
+        end
+      end
+    end
   end
 
   describe "#stats_for_weight" do

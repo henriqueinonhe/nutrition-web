@@ -41,9 +41,13 @@ class WeighingEntriesController < ApplicationController
   end
 
   def destroy
-    delete_weighing = container.get(:delete_weighing)
+    begin
+      delete_weighing = container.get(:delete_weighing)
 
-    delete_weighing.call(params[:id])
+      delete_weighing.call(params[:id])
+    rescue StandardError
+      flash[:error] = "Something went wrong"
+    end
 
     redirect_to weighing_entries_path
   end

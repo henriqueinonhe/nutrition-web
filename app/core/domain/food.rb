@@ -11,20 +11,20 @@ class Domain::Food
               :sodium_in_mg_per_gram
 
   def self.validate_id(id)
-    return if id.is_a?(String) || id.empty?
+    return if id.is_a?(String) && !id.empty?
 
     raise Errors::Error.new(
       msg: "ID (#{id}) is not a valid ID!",
-      tags: %i[PreconditionViolation ConstructionFailure Food InvalidId]
+      tags: %i[FoodValidationError InvalidId]
     )
   end
 
   def self.validate_name(name)
-    return if name.is_a?(String) || name.empty?
+    return if name.is_a?(String) && !name.empty?
 
     raise Errors::Error.new(
       msg: "Name (#{name}) is not a valid name!",
-      tags: %i[PreconditionViolation ConstructionFailure Food InvalidName]
+      tags: %i[FoodValidationError InvalidName]
     )
   end
 
@@ -33,7 +33,7 @@ class Domain::Food
 
     raise Errors::Error.new(
       msg: "Kcal per gram (#{kcal_per_gram}) is not a valid quantity per gram!",
-      tags: %i[PreconditionViolation ConstructionFailure Food InvalidKcalPerGram]
+      tags: %i[FoodValidationError InvalidKcalPerGram]
     )
   end
 
@@ -42,7 +42,7 @@ class Domain::Food
 
     raise Errors::Error.new(
       msg: "Carbohydrates in grams per gram (#{carbohydrates_in_grams_per_gram}) is not a valid quantity per gram!",
-      tags: %i[PreconditionViolation ConstructionFailure Food InvalidCarbohydratesInGramsPerGram]
+      tags: %i[FoodValidationError InvalidCarbohydratesInGramsPerGram]
     )
   end
 
@@ -51,7 +51,7 @@ class Domain::Food
 
     raise Errors::Error.new(
       msg: "Protein in grams per gram (#{protein_in_grams_per_gram}) is not a valid quantity per gram!",
-      tags: %i[PreconditionViolation ConstructionFailure Food InvalidProteinInGramsPerGram]
+      tags: %i[FoodValidationError InvalidProteinInGramsPerGram]
     )
   end
 
@@ -60,7 +60,7 @@ class Domain::Food
 
     raise Errors::Error.new(
       msg: "Total fat in grams per gram (#{total_fat_in_grams_per_gram}) is not a valid quantity per gram!",
-      tags: %i[PreconditionViolation ConstructionFailure Food InvalidTotalFatInGramsPerGram]
+      tags: %i[FoodValidationError InvalidTotalFatInGramsPerGram]
     )
   end
 
@@ -69,7 +69,7 @@ class Domain::Food
 
     raise Errors::Error.new(
       msg: "Fibers in grams per gram (#{fibers_in_grams_per_gram}) is not a valid quantity per gram!",
-      tags: %i[PreconditionViolation ConstructionFailure Food InvalidFibersInGramsPerGram]
+      tags: %i[FoodValidationError InvalidFibersInGramsPerGram]
     )
   end
 
@@ -78,7 +78,7 @@ class Domain::Food
 
     raise Errors::Error.new(
       msg: "Sodium in mg per gram (#{sodium_in_mg_per_gram}) is not a valid quantity per gram!",
-      tags: %i[PreconditionViolation ConstructionFailure Food InvalidSodiumInMgPerGram]
+      tags: %i[FoodValidationError InvalidSodiumInMgPerGram]
     )
   end
 
@@ -93,14 +93,24 @@ class Domain::Food
     sodium_in_mg_per_gram:
   )
 
-    self.class.validate_id(id)
-    self.class.validate_name(name)
-    self.class.validate_kcal_per_gram(kcal_per_gram)
-    self.class.validate_carbohydrates_in_grams_per_gram(carbohydrates_in_grams_per_gram)
-    self.class.validate_protein_in_grams_per_gram(protein_in_grams_per_gram)
-    self.class.validate_total_fat_in_grams_per_gram(total_fat_in_grams_per_gram)
-    self.class.validate_fibers_in_grams_per_gram(fibers_in_grams_per_gram)
-    self.class.validate_sodium_in_mg_per_gram(sodium_in_mg_per_gram)
+    errors = [
+      -> { self.class.validate_id(id) },
+      -> { self.class.validate_name(name) },
+      -> { self.class.validate_kcal_per_gram(kcal_per_gram) },
+      -> { self.class.validate_carbohydrates_in_grams_per_gram(carbohydrates_in_grams_per_gram) },
+      -> { self.class.validate_protein_in_grams_per_gram(protein_in_grams_per_gram) },
+      -> { self.class.validate_total_fat_in_grams_per_gram(total_fat_in_grams_per_gram) },
+      -> { self.class.validate_fibers_in_grams_per_gram(fibers_in_grams_per_gram) },
+      -> { self.class.validate_sodium_in_mg_per_gram(sodium_in_mg_per_gram) }
+    ].filter_map { |f| attempt(&f)[1] }
+
+    if errors.any?
+      raise Errors::Error.new(
+        msg: "Food construction failed!",
+        tags: %i[FoodConstructionFailure],
+        sub_errors: errors
+      )
+    end
 
     @id = id
     @name = name
