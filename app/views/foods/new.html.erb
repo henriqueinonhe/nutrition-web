@@ -1,0 +1,42 @@
+<%= link_to "Voltar", foods_path %>
+
+<%= form_with url: foods_path, method: :post do |form| %>
+  <div>
+    <%= form.label :name, "Nome:" %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div>
+    <%= form.label :kcal_per_gram, "Kcal por g" %>
+    <%= form.text_field :kcal_per_gram %>
+  </div>
+
+  <div>
+    <%= form.label :carbohydrates_in_grams_per_gram, "Carbohidratos (g)" %>
+    <%= form.text_field :carbohydrates_in_grams_per_gram %>
+  </div>
+
+  <div>
+    <%= form.label :protein_in_grams_per_gram, "Proteínas (g)" %>
+    <%= form.text_field :protein_in_grams_per_gram %>
+  </div>
+
+  <div>
+    <%= form.label :total_fat_in_grams_per_gram, "Gorduras Totais (g)" %>
+    <%= form.text_field :total_fat_in_grams_per_gram %>
+  </div>
+
+  <div>
+    <%= form.label :fibers_in_grams_per_gram, "Fibras (g)" %>
+    <%= form.text_field :fibers_in_grams_per_gram %>
+  </div>
+
+  <div>
+    <%= form.label :sodium_in_mg_per_gram, "Sódio (mg)" %>
+    <%= form.text_field :sodium_in_mg_per_gram %>
+  </div>
+
+  <%= form.submit "Salvar" %>
+<% end %>
+
+<%= flash[:error] ? flash[:error] : "" %>

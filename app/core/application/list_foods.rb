@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 class Application::ListFoods
-  def initialize(foods_hash:)
-    @foods_hash = foods_hash
+  def initialize(food_repository:)
+    @food_repository = food_repository
   end
 
   def call
-    @foods_hash.to_a.map { |_, food| food }
+    @food_repository.retrieve_all
   end
 end

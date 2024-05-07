@@ -1,29 +1,22 @@
 # frozen_string_literal: true
 
 class Application::DeleteFood
-  def initialize(foods_hash:, foods_persistence:)
-    @foods_hash = foods_hash
-    @foods_persistence = foods_persistence
+  def initialize(food_repository:)
+    @foods_persistence = food_repository
   end
 
   def call(
     food_id
   )
-    food_to_delete = @foods_hash[food_id]
-
-    if food_to_delete.nil?
+    @foods_persistence.delete(food_id)
+  rescue Errors::Error => e
+    if e.tag?(:FoodRepositoryError) && e.tag?(:FailedToDelete)
       raise Errors::Error.new(
-        msg: "Food with id #{food_id} not found",
-        tags: %i[ValidationError FoodNotFound]
+        msg: e.msg,
+        tags: [:ValidationError]
       )
     end
 
-    updated_foods_list = @foods_hash.to_a.map { |_, food| food }.reject { |food| food.id == food_id }
-
-    @foods_persistence.store(updated_foods_list)
-
-    @foods_hash.delete(food_id)
-
-    food_to_delete
+    raise e
   end
 end

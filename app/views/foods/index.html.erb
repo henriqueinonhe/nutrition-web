@@ -1,0 +1,7 @@
+<%= link_to "Adicionar Alimento", new_food_path %>
+
+<ul>
+  <% @foods.each do |food| %>
+    <li><%= food.name %></li>
+  <% end %>
+</ul>
