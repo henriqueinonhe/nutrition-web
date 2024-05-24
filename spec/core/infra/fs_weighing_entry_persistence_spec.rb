@@ -70,4 +70,7 @@ RSpec.describe Infra::FsWeighingEntryPersistence do
       expect(found_entry).to eq(some_entry)
     end
   end
+
+  describe "#" do
+  end
 end
