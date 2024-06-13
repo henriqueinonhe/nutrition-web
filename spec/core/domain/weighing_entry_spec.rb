@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe Domain::WeighingEntry do
   describe "#initialize" do
     context "when creating a weighing entry with a non-string id" do
-      it "raises an exception" do
+      it "raises an exception", :aggregate_failures do
         expect do
           Domain::WeighingEntry.new(
             id: 1,
@@ -13,18 +13,16 @@ RSpec.describe Domain::WeighingEntry do
             weight_in_kg: 20
           )
         end.to raise_error do |error|
-          aggregate_failures do
-            expect(error.tag?(:WeighingEntryConstructionFailure)).to be(true)
-            expect(error.sub_errors.size).to eq(1)
-            expect(error.sub_errors[0].tag?(:WeighingEntryValidationError)).to be(true)
-            expect(error.sub_errors[0].tag?(:InvalidId)).to be(true)
-          end
+          expect(error.tag?(:WeighingEntryConstructionFailure)).to be(true)
+          expect(error.sub_errors.size).to eq(1)
+          expect(error.sub_errors[0].tag?(:WeighingEntryValidationError)).to be(true)
+          expect(error.sub_errors[0].tag?(:InvalidId)).to be(true)
         end
       end
     end
 
     context "when creating a weighing entry with an empty id" do
-      it "raises an exception" do
+      it "raises an exception", :aggregate_failures do
         expect do
           Domain::WeighingEntry.new(
             id: "",
@@ -32,18 +30,16 @@ RSpec.describe Domain::WeighingEntry do
             weight_in_kg: 20
           )
         end.to raise_error do |error|
-          aggregate_failures do
-            expect(error.tag?(:WeighingEntryConstructionFailure)).to be(true)
-            expect(error.sub_errors.size).to eq(1)
-            expect(error.sub_errors[0].tag?(:WeighingEntryValidationError)).to be(true)
-            expect(error.sub_errors[0].tag?(:InvalidId)).to be(true)
-          end
+          expect(error.tag?(:WeighingEntryConstructionFailure)).to be(true)
+          expect(error.sub_errors.size).to eq(1)
+          expect(error.sub_errors[0].tag?(:WeighingEntryValidationError)).to be(true)
+          expect(error.sub_errors[0].tag?(:InvalidId)).to be(true)
         end
       end
     end
 
     context "when creating a weighing entry with an invalid date" do
-      it "raises an exception" do
+      it "raises an exception", :agrgegate_failures do
         expect do
           Domain::WeighingEntry.new(
             id: "1",
@@ -51,18 +47,16 @@ RSpec.describe Domain::WeighingEntry do
             weight_in_kg: 20
           )
         end.to raise_error do |error|
-          aggregate_failures do
-            expect(error.tag?(:WeighingEntryConstructionFailure)).to be(true)
-            expect(error.sub_errors.size).to eq(1)
-            expect(error.sub_errors[0].tag?(:WeighingEntryValidationError)).to be(true)
-            expect(error.sub_errors[0].tag?(:InvalidDate)).to be(true)
-          end
+          expect(error.tag?(:WeighingEntryConstructionFailure)).to be(true)
+          expect(error.sub_errors.size).to eq(1)
+          expect(error.sub_errors[0].tag?(:WeighingEntryValidationError)).to be(true)
+          expect(error.sub_errors[0].tag?(:InvalidDate)).to be(true)
         end
       end
     end
 
     context "when creating a weighing entry with zero weight" do
-      it "raises an exception" do
+      it "raises an exception", :aggregate_failures do
         expect do
           Domain::WeighingEntry.new(
             id: "1",
@@ -70,18 +64,16 @@ RSpec.describe Domain::WeighingEntry do
             weight_in_kg: 0
           )
         end.to raise_error do |error|
-          aggregate_failures do
-            expect(error.tag?(:WeighingEntryConstructionFailure)).to be(true)
-            expect(error.sub_errors.size).to eq(1)
-            expect(error.sub_errors[0].tag?(:WeighingEntryValidationError)).to be(true)
-            expect(error.sub_errors[0].tag?(:InvalidWeight)).to be(true)
-          end
+          expect(error.tag?(:WeighingEntryConstructionFailure)).to be(true)
+          expect(error.sub_errors.size).to eq(1)
+          expect(error.sub_errors[0].tag?(:WeighingEntryValidationError)).to be(true)
+          expect(error.sub_errors[0].tag?(:InvalidWeight)).to be(true)
         end
       end
     end
 
     context "when creating a weighing entry with negative weight" do
-      it "raises an exception" do
+      it "raises an exception", :aggregate_failures do
         expect do
           Domain::WeighingEntry.new(
             id: "1",
@@ -89,18 +81,16 @@ RSpec.describe Domain::WeighingEntry do
             weight_in_kg: -20
           )
         end.to raise_error do |error|
-          aggregate_failures do
-            expect(error.tag?(:WeighingEntryConstructionFailure)).to be(true)
-            expect(error.sub_errors.size).to eq(1)
-            expect(error.sub_errors[0].tag?(:WeighingEntryValidationError)).to be(true)
-            expect(error.sub_errors[0].tag?(:InvalidWeight)).to be(true)
-          end
+          expect(error.tag?(:WeighingEntryConstructionFailure)).to be(true)
+          expect(error.sub_errors.size).to eq(1)
+          expect(error.sub_errors[0].tag?(:WeighingEntryValidationError)).to be(true)
+          expect(error.sub_errors[0].tag?(:InvalidWeight)).to be(true)
         end
       end
     end
 
     context "when creating an entry with a few invalid attributes" do
-      it "raises an exception with aggregated errors" do
+      it "raises an exception with aggregated errors", :aggregate_failures do
         expect do
           Domain::WeighingEntry.new(
             id: "",
@@ -108,28 +98,26 @@ RSpec.describe Domain::WeighingEntry do
             weight_in_kg: -20
           )
         end.to raise_error do |error|
-          aggregate_failures do
-            expect(error.tag?(:WeighingEntryConstructionFailure)).to be(true)
-            expect(error.sub_errors.size).to eq(3)
+          expect(error.tag?(:WeighingEntryConstructionFailure)).to be(true)
+          expect(error.sub_errors.size).to eq(3)
 
-            expect(
-              error.sub_errors.any? do |e|
-                e.tag?(:WeighingEntryValidationError) && e.tag?(:InvalidId)
-              end
-            ).to be(true)
+          expect(
+            error.sub_errors.any? do |e|
+              e.tag?(:WeighingEntryValidationError) && e.tag?(:InvalidId)
+            end
+          ).to be(true)
 
-            expect(
-              error.sub_errors.any? do |e|
-                e.tag?(:WeighingEntryValidationError) && e.tag?(:InvalidWeight)
-              end
-            ).to be(true)
+          expect(
+            error.sub_errors.any? do |e|
+              e.tag?(:WeighingEntryValidationError) && e.tag?(:InvalidWeight)
+            end
+          ).to be(true)
 
-            expect(
-              error.sub_errors.any? do |e|
-                e.tag?(:WeighingEntryValidationError) && e.tag?(:InvalidDate)
-              end
-            ).to be(true)
-          end
+          expect(
+            error.sub_errors.any? do |e|
+              e.tag?(:WeighingEntryValidationError) && e.tag?(:InvalidDate)
+            end
+          ).to be(true)
         end
       end
     end
@@ -257,7 +245,7 @@ RSpec.describe Domain::WeighingEntry do
     end
 
     context "when passing an invalid date" do
-      it "raises an exception" do
+      it "raises an exception", :aggregate_failures do
         results = setup
 
         weighing_entry = results[:weighing_entry]
@@ -265,10 +253,8 @@ RSpec.describe Domain::WeighingEntry do
         expect do
           weighing_entry.date = "asdasd"
         end.to raise_error do |error|
-          aggregate_failures do
-            expect(error.tag?(:WeighingEntryValidationError)).to be(true)
-            expect(error.tag?(:InvalidDate)).to be(true)
-          end
+          expect(error.tag?(:WeighingEntryValidationError)).to be(true)
+          expect(error.tag?(:InvalidDate)).to be(true)
         end
       end
     end
@@ -302,7 +288,7 @@ RSpec.describe Domain::WeighingEntry do
     end
 
     context "when passing an invalid weight" do
-      it "raises an exception" do
+      it "raises an exception", :aggregate_failures do
         results = setup
 
         weighing_entry = results[:weighing_entry]
@@ -310,10 +296,8 @@ RSpec.describe Domain::WeighingEntry do
         expect do
           weighing_entry.weight_in_kg = -20
         end.to raise_error do |error|
-          aggregate_failures do
-            expect(error.tag?(:WeighingEntryValidationError)).to be(true)
-            expect(error.tag?(:InvalidWeight)).to be(true)
-          end
+          expect(error.tag?(:WeighingEntryValidationError)).to be(true)
+          expect(error.tag?(:InvalidWeight)).to be(true)
         end
       end
     end
